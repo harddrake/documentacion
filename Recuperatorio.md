@@ -7,9 +7,6 @@ DOCUMENTAR TODO EL PROCESO EN GITHUB CON CAPTURAS DE PANTALLA
 3. CREAS GRUPO LVM SISTEMAS-kvm02
 4. CREAR 3 VOLUMENES LOGICOS DENTRO DE SISTEMAS-KVM
 
-
-
-
 ##Agregando disco virtual de 8 GB
 
 Abrir Virt Manager
@@ -37,17 +34,20 @@ Encendemos la máquina virtual
 iniciamos sesión
 
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-5.png)
+```
 ejecutamos fdisk -l | more
-podemos ver el disco
+```
+Podemos ver el disco
 
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-6.png)
 
-
+```
 ejecutamos cfdisk /dev/sdc
+```
 
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-7.png)
 
-dividimos el disco en dos unidades para poder crear:
+###Dividimos el disco en dos unidades para poder crear:
 
 GRUPO LVM SISTEMAS-kvm01
 GRUPO LVM SISTEMAS-kvm02
@@ -58,49 +58,51 @@ Se se crean dos particiones
 creamos el volumen fisico pvcreate
 
  sdc1 
-  
+  ```
   root@debian1:~# pvcreate /dev/sdc1
   Writing physical volume data to disk "/dev/sdc1"
   Physical volume "/dev/sdc1" successfully created
-
+```
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-9.png)
 
  sdc2
-
+```
 root@debian1:~# pvcreate /dev/sdc2
   Writing physical volume data to disk "/dev/sdc2"
   Physical volume "/dev/sdc2" successfully created
-
+```
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-10.png)
 
 creamos el grupo SISTEMAS-kvm01 en el disco /dev/sdc1
-
+```
 root@debian1:~# vgcreate SISTEMAS-kvm01 /dev/sdc1
   Volume group "SISTEMAS-kvm01" successfully created
-
+```
 creamos el grupo SISTEMAS-kvm02 en el disco /dev/sdc2
-
+```
 root@debian1:~# vgcreate SISTEMAS-kvm02 /dev/sdc2
   Volume group "SISTEMAS-kvm02" successfully created
-  
+  ```
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-11.png)
 
 Creamos 3 VOLUMENES lógicos en "SISTEMAS-kvm01" 
-
+```
 lvcreate -L 100m -n  grupo-kvm-1 SISTEMAS-kvm01
 root@debian1:~# lvcreate -L 100m -n  grupo-kvm-1 SISTEMAS-kvm01
   Logical volume "grupo-kvm-1" created
-
+```
+```
 lvcreate -L 200m -n  grupo-kvm-2 SISTEMAS-kvm01
 root@debian1:~# lvcreate -L 200m -n  grupo-kvm-2 SISTEMAS-kvm01
   Logical volume "grupo-kvm-2" created
-
+```
+```
 lvcreate -L 300m -n  grupo-kvm-3 SISTEMAS-kvm01 
 root@debian1:~# lvcreate -L 300m -n  grupo-kvm-3 SISTEMAS-kvm01 
   Logical volume "grupo-kvm-3" created
-  
+  ```
 Ejecutamos LVS
-
+```
 root@debian1:~# lvs
   LV          VG             Attr     LSize   Pool Origin Data%  Move Log Copy%  Convert
   VLHOME      SISTEMAS       -wi-ao-- 952,00m                                           
@@ -110,27 +112,28 @@ root@debian1:~# lvs
   grupo-kvm-2 SISTEMAS-kvm01 -wi-a--- 200,00m                                           
   grupo-kvm-3 SISTEMAS-kvm01 -wi-a--- 300,00m                                           
   vol100      egpp           -wi-ao-- 500,00m  
-  
+ ``` 
   ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-16.png)
 
 Creamos 3 VOLUMENES lógicos en "SISTEMAS-kvm02" 
-
+```
 lvcreate -L 100m -n  grupo2-kvm-1 SISTEMAS-kvm02
 root@debian1:~# lvcreate -L 100m -n  grupo2-kvm-1 SISTEMAS-kvm02
   Logical volume "grupo2-kvm-1" created
-
+```
+```
 lvcreate -L 100m -n  grupo2-kvm-2 SISTEMAS-kvm02
 root@debian1:~# lvcreate -L 100m -n  grupo2-kvm-2 SISTEMAS-kvm02
   Logical volume "grupo2-kvm-2" created
-
-
+```
+```
 lvcreate -L 100m -n  grupo2-kvm-3 SISTEMAS-kvm02
 root@debian1:~# lvcreate -L 100m -n  grupo2-kvm-3 SISTEMAS-kvm02
   Logical volume "grupo2-kvm-3" created
+```
 
-  
 Ejecutamos LVS
-
+```
 root@debian1:~# lvs
   LV           VG             Attr     LSize   Pool Origin Data%  Move Log Copy%  Convert
   VLHOME       SISTEMAS       -wi-ao-- 952,00m                                           
@@ -143,12 +146,13 @@ root@debian1:~# lvs
   grupo2-kvm-2 SISTEMAS-kvm02 -wi-a--- 100,00m                                           
   grupo2-kvm-3 SISTEMAS-kvm02 -wi-a--- 100,00m                                           
   vol100       egpp           -wi-ao-- 500,00m                                           
-
+```
   ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-19.png)
 Damos formato a los nuevos volumenes del grupo SISTEMAS-kvm01
-
+```
 root@debian1:~# mkfs.ext3 -m 0 /dev/mapper/SISTEMAS--kvm01-grupo--kvm--1
-
+```
+```
 mke2fs 1.42.5 (29-Jul-2012)
 Discarding device blocks: hecho                           
 Etiqueta del sistema de ficheros=
@@ -170,11 +174,11 @@ Allocating group tables: hecho
 Escribiendo las tablas de nodos-i: hecho                           
 Creating journal (4096 blocks): hecho
 Escribiendo superbloques y la información contable del sistema de ficheros: hecho
-
+```
 
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-20.png)
 
-
+```
 root@debian1:~# mkfs.ext3 -m 0 /dev/mapper/SISTEMAS--kvm01-grupo--kvm--2 
 mke2fs 1.42.5 (29-Jul-2012)
 Discarding device blocks: hecho                           
@@ -197,9 +201,9 @@ Allocating group tables: hecho
 Escribiendo las tablas de nodos-i: hecho                           
 Creating journal (4096 blocks): hecho
 Escribiendo superbloques y la información contable del sistema de ficheros: hecho
-
+```
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-21.png)
-
+```
 root@debian1:~# mkfs.ext3 -m 0 /dev/mapper/SISTEMAS--kvm01-grupo--kvm--3 
 mke2fs 1.42.5 (29-Jul-2012)
 Discarding device blocks: hecho                           
@@ -222,10 +226,10 @@ Allocating group tables: hecho
 Escribiendo las tablas de nodos-i: hecho                           
 Creating journal (8192 blocks): hecho
 Escribiendo superbloques y la información contable del sistema de ficheros: hecho
-
+```
 
 Damos formato a los nuevos volumenes del grupo SISTEMAS-kvm02
-
+```
 root@debian1:~# mkfs.ext3 /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--1
 mke2fs 1.42.5 (29-Jul-2012)
 Discarding device blocks: hecho                           
@@ -248,9 +252,9 @@ Allocating group tables: hecho
 Escribiendo las tablas de nodos-i: hecho                           
 Creating journal (4096 blocks): hecho
 Escribiendo superbloques y la información contable del sistema de ficheros: hecho
+```
 
-
-
+```
 root@debian1:~# mkfs.ext3 /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--2
 mke2fs 1.42.5 (29-Jul-2012)
 Discarding device blocks: hecho                           
@@ -273,9 +277,9 @@ Allocating group tables: hecho
 Escribiendo las tablas de nodos-i: hecho                           
 Creating journal (4096 blocks): hecho
 Escribiendo superbloques y la información contable del sistema de ficheros: hecho
+```
 
-
-
+```
 root@debian1:~# mkfs.ext3 /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--3
 mke2fs 1.42.5 (29-Jul-2012)
 Discarding device blocks: hecho                           
@@ -298,22 +302,22 @@ Allocating group tables: hecho
 Escribiendo las tablas de nodos-i: hecho                           
 Creating journal (4096 blocks): hecho
 Escribiendo superbloques y la información contable del sistema de ficheros: hecho
-
+```
 
 Finalmente creamos los directorios para montar las nuevas unidades
-
+```
   grupo-kvm-1  SISTEMAS-kvm01 -wi-a--- 100,00m                                           
   grupo-kvm-2  SISTEMAS-kvm01 -wi-a--- 200,00m                                           
   grupo-kvm-3  SISTEMAS-kvm01 -wi-a--- 300,00m                                           
   grupo2-kvm-1 SISTEMAS-kvm02 -wi-a--- 100,00m                                           
   grupo2-kvm-2 SISTEMAS-kvm02 -wi-a--- 100,00m                                           
   grupo2-kvm-3 SISTEMAS-kvm02 -wi-a--- 100,00m                                           
-
-
+```
+```
 root@debian1:~# mkdir -p /mnt/practica/{grupo-kvm-1,grupo-kvm-2,grupo-kvm-3,grupo2-kvm-1,grupo2-kvm-2,grupo2-kvm-3}
-
+```
 Montamos las unidades en sus respectivos directorios
-
+```
 root@debian1:/# mount /dev/mapper/SISTEMAS--kvm01-grupo--kvm--1 /mnt/practica/grupo-kvm-1/
 
 root@debian1:/# mount /dev/mapper/SISTEMAS--kvm01-grupo--kvm--2 /mnt/practica/grupo-kvm-2/
@@ -325,9 +329,9 @@ root@debian1:/# mount /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--1 /mnt/practica/g
 root@debian1:/# mount /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--2 /mnt/practica/grupo2-kvm-2/
 
 root@debian1:/# mount /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--3 /mnt/practica/grupo2-kvm-3/
-
+```
 Ejecutamos df -h 
-
+```
 root@debian1:/# df -h
 S.ficheros                                             Tamaño Usados  Disp Uso% Montado en
 rootfs                                                   1,9G   279M  1,5G  16% /
@@ -347,5 +351,5 @@ tmpfs                                                    298M      0  298M   0% 
 /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--1                97M   5,6M   87M   7% /mnt/practica/grupo2-kvm-1
 /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--2                97M   5,6M   87M   7% /mnt/practica/grupo2-kvm-2
 /dev/mapper/SISTEMAS--kvm02-grupo2--kvm--3                97M   5,6M   87M   7% /mnt/practica/grupo2-kvm-3
-
+```
 ![](https://raw.githubusercontent.com/harddrake/documentacion/14adbb4bb84fe9d8a7423f5cc9a714b71178e88e/CrearDiscoVirtual8G-26.png)
